@@ -11,54 +11,54 @@ import android.os.Bundle;
 import android.transition.TransitionManager;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
-
-
 import java.util.Random;
 
 public class Following extends AppCompatActivity {
 
+    //global variables that store the ids of the cards in the respective positions on screen
     int first = R.id.card1;
     int second = R.id.card2;
     int third = R.id.card3;
 
+    //method that gets called every time the activity is rendered
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_following);
 
+        //statement to save the variable passed from the main activity
         final int noOfTurns = getIntent().getIntExtra("turns", 0);
 
-        //prevents the user from triggering display before and during the cards moving
+        //prevent the user from triggering display before and during the cards moving
         findViewById(R.id.card1).setClickable(false);
         findViewById(R.id.card2).setClickable(false);
         findViewById(R.id.card3).setClickable(false);
 
+        //display to the user the original positions of the cards
         findViewById(R.id.card1).setBackgroundResource(R.drawable.jack);
         findViewById(R.id.card2).setBackgroundResource(R.drawable.queen);
         findViewById(R.id.card3).setBackgroundResource(R.drawable.king);
 
-        //final TextView tv = (TextView) findViewById(R.id.test);
-
+        //runs the code after giving the user 3 seconds to memorize the cards
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                //upturn the cards back to identical backgrounds
                 findViewById(R.id.card1).setBackgroundResource(R.drawable.back_black);
                 findViewById(R.id.card2).setBackgroundResource(R.drawable.back_black);
                 findViewById(R.id.card3).setBackgroundResource(R.drawable.back_black);
 
-                for(int i = 0; i < 5; i++)
+                //run a loop as many times as the difficulty of the level demands
+                for(int i = 0; i < noOfTurns; i++)
                 {
-                    Random r = new Random();
-
                     //generate 0,1 or 2 for the path and call the animation with their R.ids
+                    Random r = new Random(); //need an instance to call the nextInt method in a non-static context
                     int path = r.nextInt(2);
                     animation(path, i);
 
                 }
-
-
 
                 //allows the user to choose once the turning is complete
                 findViewById(R.id.card1).setClickable(true);
@@ -66,11 +66,9 @@ public class Following extends AppCompatActivity {
                 findViewById(R.id.card3).setClickable(true);
             }
         }, 3000);
-
-
     }
 
-
+    //method to run the animation
     public void animation(int path, int i)
     {
         ValueAnimator va_y1 = ValueAnimator.ofFloat(0f, 1210f);
@@ -128,19 +126,19 @@ public class Following extends AppCompatActivity {
 
         va_y1.start();
         va_y2.start();
-    //http://www.vogella.com/tutorials/AndroidAnimation/article.html
+        //http://www.vogella.com/tutorials/AndroidAnimation/article.html
         //create three paths that move the cards and call one of them based on the parameter passed
+        //http://stackoverflow.com/questions/33088728/moving-an-image-with-button-android-studio
     }
 
-
-
+    //method that is executed when one of the cards is selected
     public void display(View v)
     {
-
         //use id of clicked button and check if correct or wrong and call win/lose activity
-        int correct = R.id.card2; //id of the card which has queen
-        int clicked = v.getId();
+        int correct = R.id.card2; //id of the queen card
+        int clicked = v.getId(); //id of the button that called the method
 
+        //intent object to call the End Screen with the results
         final Intent i = new Intent(getApplicationContext(), EndScreen.class);
 
         if(correct == clicked)
@@ -152,14 +150,17 @@ public class Following extends AppCompatActivity {
             i.putExtra("status", "lost");
         }
 
+        //prevent the user from changing their click
         findViewById(R.id.card1).setClickable(false);
         findViewById(R.id.card2).setClickable(false);
         findViewById(R.id.card3).setClickable(false);
 
+        //display to the user the values of the cards
         findViewById(R.id.card1).setBackgroundResource(R.drawable.jack);
         findViewById(R.id.card2).setBackgroundResource(R.drawable.queen);
         findViewById(R.id.card3).setBackgroundResource(R.drawable.king);
 
+        //change to the End Screen after giving the user a second to see the resultant positions
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -167,8 +168,5 @@ public class Following extends AppCompatActivity {
                 startActivity(i);
             }
         }, 1000);
-
     }
-
-    //http://stackoverflow.com/questions/33088728/moving-an-image-with-button-android-studio
 }
