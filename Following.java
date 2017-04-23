@@ -1,17 +1,15 @@
 package com.example.abc.followthelady;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import java.util.Random;
 
 public class Following extends AppCompatActivity {
-
-    //declare global variables to store the value of each card on the basis of the picture on it
-    int card1 = 13;
-    int card2 = 12;
-    int card3 = 11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,33 +17,96 @@ public class Following extends AppCompatActivity {
         setContentView(R.layout.activity_following);
 
         int noOfTurns = getIntent().getIntExtra("turns", 0);
-        
+
+        //prevents the user from triggering display before and during the cards moving
+        findViewById(R.id.card1).setClickable(false);
+        findViewById(R.id.card2).setClickable(false);
+        findViewById(R.id.card3).setClickable(false);
+
+
+        findViewById(R.id.card1).setBackgroundResource(R.drawable.jack);
+        findViewById(R.id.card2).setBackgroundResource(R.drawable.queen);
+        findViewById(R.id.card3).setBackgroundResource(R.drawable.king);
+
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.card1).setBackgroundResource(R.drawable.back_black);
+                findViewById(R.id.card2).setBackgroundResource(R.drawable.back_black);
+                findViewById(R.id.card3).setBackgroundResource(R.drawable.back_black);
+            }
+        }, 5000);
+
         for(int i = 0; i < noOfTurns; i++)
         {
-            int path = 0; //generate 0,1 or 2 for the path and call the animation with their R.ids
+            Random r = new Random();
+
+            //generate 0,1 or 2 for the path and call the animation with their R.ids
+            int path = r.nextInt(2);
+            animation(path);
         }
+
+        //allows the user to choose once the turning is complete
+        findViewById(R.id.card1).setClickable(true);
+        findViewById(R.id.card2).setClickable(true);
+        findViewById(R.id.card3).setClickable(true);
     }
 
-    public void animation(int switch1, int switch2)
+    public void animation(int path)
     {
+        ValueAnimator va_y1 = ValueAnimator.ofInt(25, 335);
+        ValueAnimator va_y2 = ValueAnimator.ofInt(335, 25);
+        int a = R.id.card1;
+        int b = R.id.card3;
 
+        switch(path)
+        {
+            case 1:
+                va_y1 = ValueAnimator.ofInt(193, 335);
+                va_y2 = ValueAnimator.ofInt(335, 193);
+                a = R.id.card2;
+                b = R.id.card3;
+                break;
+            case 2:
+                va_y1 = ValueAnimator.ofInt(25, 193);
+                va_y2 = ValueAnimator.ofInt(193, 25);
+                a = R.id.card1;
+                b = R.id.card2;
+                break;
+
+        }
+
+        va_y1.setDuration(3000);
+        va_y2.setDuration(3000);
+
+        final ImageButton switch1 = (ImageButton) findViewById(a);
+        final ImageButton switch2 = (ImageButton) findViewById(b);
+
+        va_y1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                switch1.setTranslationY((int)animation.getAnimatedValue());
+            }
+        });
+
+        va_y2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                switch2.setTranslationY((int)animation.getAnimatedValue());
+            }
+        });
+
+        va_y1.start();
+        va_y2.start();
+
+        //create three paths that move the cards and call one of them based on the parameter passed
     }
 
     public void display(View v)
     {
-        findViewById(R.id.card1).setVisibility(View.GONE);
-        findViewById(R.id.card2).setVisibility(View.GONE);
-        findViewById(R.id.card3).setVisibility(View.GONE);
-
-        //use the values on the cards to declare their positions
-
-        findViewById(R.id.king).setVisibility(View.VISIBLE);
-        findViewById(R.id.queen).setVisibility(View.VISIBLE);
-        findViewById(R.id.jack).setVisibility(View.VISIBLE);
 
         //use id of clicked button and check if correct or wrong and call win/lose activity
-
-        int correct = 0; //id of the card which has queen
+        int correct = R.id.card2; //id of the card which has queen
         int clicked = v.getId();
 
         Intent i = new Intent(getApplicationContext(), EndScreen.class);
@@ -63,13 +124,4 @@ public class Following extends AppCompatActivity {
     }
 
     //http://stackoverflow.com/questions/33088728/moving-an-image-with-button-android-studio
-
-    /*
-    Button king = (Button) findViewById(R.id.king);
-    king.setVisibility(1);
-    when play is clicked show stop button and hide play button
-        playButton.setVisibility(View.GONE);
-          stopButton.setVisibility(View.VISIBLE);
-
-     */
 }

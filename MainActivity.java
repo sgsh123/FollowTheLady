@@ -15,11 +15,12 @@ public class MainActivity extends AppCompatActivity {
 
     //Methods to call the game and pass the appropriate number of turns on the basis of the level chosen
 
-    public void level1(View v) {
-        Intent i = new Intent(getApplicationContext(), Following.class);
-        i.putExtra("turns", 5);
-        startActivity(i);
-    }
+        public void level1(View v)
+        {
+            Intent i = new Intent(getApplicationContext(), Following.class);
+            i.putExtra("turns", 5);
+            startActivity(i);
+        }
 
         public void level2(View v)
         {
