@@ -15,66 +15,40 @@ public class MainActivity extends AppCompatActivity {
 
     //Methods to call the game and pass the appropriate number of turns on the basis of the level chosen
 
-        public void level1(View v)
+        public void level(View v)
         {
             Intent i = new Intent(getApplicationContext(), Following.class);
-            i.putExtra("turns", 5);
-            startActivity(i);
-        }
+            switch(v.getId())
+            {
+                case R.id.lvl1:
+                    i.putExtra("turns", 5);
+                    break;
+                case R.id.lvl2:
+                    i.putExtra("turns", 10);
+                    break;
+                case R.id.lvl3:
+                    i.putExtra("turns", 15);
+                    break;
+                case R.id.lvl4:
+                    i.putExtra("turns", 18);
+                    break;
+                case R.id.lvl5:
+                    i.putExtra("turns", 23);
+                    break;
+                case R.id.lvl6:
+                    i.putExtra("turns", 27);
+                    break;
+                case R.id.lvl7:
+                    i.putExtra("turns", 30);
+                    break;
+                case R.id.lvl8:
+                    i.putExtra("turns", 33);
+                    break;
+                case R.id.lvl9:
+                    i.putExtra("turns", 35);
+                    break;
+            }
 
-        public void level2(View v)
-        {
-            Intent i = new Intent(getApplicationContext(),Following.class);
-            i.putExtra("turns",10);
-            startActivity(i);
-        }
-
-        public void level3(View v)
-        {
-            Intent i = new Intent(getApplicationContext(),Following.class);
-            i.putExtra("turns",18);
-            startActivity(i);
-        }
-
-        public void level4(View v)
-        {
-            Intent i = new Intent(getApplicationContext(),Following.class);
-            i.putExtra("turns",25);
-            startActivity(i);
-        }
-
-        public void level5(View v)
-        {
-            Intent i = new Intent(getApplicationContext(),Following.class);
-            i.putExtra("turns",30);
-            startActivity(i);
-        }
-
-        public void level6(View v)
-        {
-            Intent i = new Intent(getApplicationContext(),Following.class);
-            i.putExtra("turns",35);
-            startActivity(i);
-        }
-
-        public void level7(View v)
-        {
-            Intent i = new Intent(getApplicationContext(),Following.class);
-            i.putExtra("turns",40);
-            startActivity(i);
-        }
-
-        public void level8(View v)
-        {
-            Intent i = new Intent(getApplicationContext(),Following.class);
-            i.putExtra("turns",45);
-            startActivity(i);
-        }
-
-        public void level9(View v)
-        {
-            Intent i = new Intent(getApplicationContext(),Following.class);
-            i.putExtra("turns",50);
             startActivity(i);
         }
 

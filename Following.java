@@ -56,7 +56,9 @@ public class Following extends AppCompatActivity {
                     //generate 0,1 or 2 for the path and call the animation with their R.ids
                     Random r = new Random(); //need an instance to call the nextInt method in a non-static context
                     int path = r.nextInt(2);
-                    animation(path, i);
+                    //animation(path, i);
+
+
 
                 }
 
@@ -129,6 +131,7 @@ public class Following extends AppCompatActivity {
         //http://www.vogella.com/tutorials/AndroidAnimation/article.html
         //create three paths that move the cards and call one of them based on the parameter passed
         //http://stackoverflow.com/questions/33088728/moving-an-image-with-button-android-studio
+        //https://software.intel.com/en-us/android/articles/2d-animation-for-android-series-comparing-and-contrasting-different-ways-of-doing-the-same
     }
 
     //method that is executed when one of the cards is selected
