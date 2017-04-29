@@ -1,18 +1,15 @@
 package com.example.abc.followthelady;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +56,7 @@ public class Following extends AppCompatActivity {
                     }
                 });
 
-        //prevent the user from triggering display before the cards start moving
+        //prevent the user from triggering display before and while the cards start moving
         findViewById(R.id.card1).setClickable(false);
         findViewById(R.id.card2).setClickable(false);
         findViewById(R.id.card3).setClickable(false);
@@ -75,10 +72,6 @@ public class Following extends AppCompatActivity {
                 findViewById(R.id.card2).setBackgroundResource(R.drawable.back_black);
                 findViewById(R.id.card3).setBackgroundResource(R.drawable.back_black);
 
-                //prevent the user from triggering display before and during the cards moving
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
                 //run a loop as many times as the difficulty of the level demands
                 for(int i = 0; i < noOfTurns; i++)
                 {
@@ -88,11 +81,17 @@ public class Following extends AppCompatActivity {
                     animation(path, i, noOfTurns);
                 }
 
-                //allows the user to choose once the turning is complete
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                findViewById(R.id.card1).setClickable(true);
-                findViewById(R.id.card2).setClickable(true);
-                findViewById(R.id.card3).setClickable(true);
+                switch_y1.get(noOfTurns-1).addListener(new AnimatorListenerAdapter()
+                {
+                    @Override
+                    public void onAnimationEnd(Animator animation)
+                    {
+                        //allows the user to choose once the turning is complete
+                        findViewById(R.id.card1).setClickable(true);
+                        findViewById(R.id.card2).setClickable(true);
+                        findViewById(R.id.card3).setClickable(true);
+                    }
+                });
 
             }
         }, 3000);
