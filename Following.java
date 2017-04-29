@@ -1,16 +1,21 @@
 package com.example.abc.followthelady;
 
 import android.animation.AnimatorSet;
-import android.animation.ValueAnimator;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.transition.TransitionManager;
 import android.view.View;
-import android.widget.ImageButton;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Following extends AppCompatActivity {
@@ -19,6 +24,12 @@ public class Following extends AppCompatActivity {
     int first = R.id.card1;
     int second = R.id.card2;
     int third = R.id.card3;
+
+    AnimatorSet switches = new AnimatorSet();
+    List<ObjectAnimator> switch_y1 = new ArrayList<>();
+    List<ObjectAnimator> switch_y2 = new ArrayList<>();
+
+    float ys[] = new float[3];
 
     //method that gets called every time the activity is rendered
     @Override
@@ -29,15 +40,29 @@ public class Following extends AppCompatActivity {
         //statement to save the variable passed from the main activity
         final int noOfTurns = getIntent().getIntExtra("turns", 0);
 
-        //prevent the user from triggering display before and during the cards moving
-        findViewById(R.id.card1).setClickable(false);
-        findViewById(R.id.card2).setClickable(false);
-        findViewById(R.id.card3).setClickable(false);
-
         //display to the user the original positions of the cards
         findViewById(R.id.card1).setBackgroundResource(R.drawable.jack);
         findViewById(R.id.card2).setBackgroundResource(R.drawable.queen);
         findViewById(R.id.card3).setBackgroundResource(R.drawable.king);
+
+        final View view = findViewById(R.id.check_layout);
+
+        view.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+
+                        //Layout has been rendered here
+                        ys[0] = findViewById(first).getTop();
+                        ys[1] = findViewById(second).getTop();
+                        ys[2] = findViewById(third).getTop();
+                    }
+                });
+
+        //prevent the user from triggering display before the cards start moving
+        findViewById(R.id.card1).setClickable(false);
+        findViewById(R.id.card2).setClickable(false);
+        findViewById(R.id.card3).setClickable(false);
 
         //runs the code after giving the user 3 seconds to memorize the cards
         final Handler handler = new Handler();
@@ -50,88 +75,74 @@ public class Following extends AppCompatActivity {
                 findViewById(R.id.card2).setBackgroundResource(R.drawable.back_black);
                 findViewById(R.id.card3).setBackgroundResource(R.drawable.back_black);
 
+                //prevent the user from triggering display before and during the cards moving
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
                 //run a loop as many times as the difficulty of the level demands
                 for(int i = 0; i < noOfTurns; i++)
                 {
                     //generate 0,1 or 2 for the path and call the animation with their R.ids
                     Random r = new Random(); //need an instance to call the nextInt method in a non-static context
                     int path = r.nextInt(2);
-                    //animation(path, i);
-
-
-
+                    animation(path, i, noOfTurns);
                 }
 
                 //allows the user to choose once the turning is complete
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 findViewById(R.id.card1).setClickable(true);
                 findViewById(R.id.card2).setClickable(true);
                 findViewById(R.id.card3).setClickable(true);
+
             }
         }, 3000);
+
+
     }
 
     //method to run the animation
-    public void animation(int path, int i)
+    public void animation(int path, int i, int noOfTurns)
     {
-        ValueAnimator va_y1 = ValueAnimator.ofFloat(0f, 1210f);
-        ValueAnimator va_y2 = ValueAnimator.ofFloat(0f, -1210f);
-        int a = first;
-        int b = third;
-
         int temp = first;
 
         switch(path)
         {
             case 0:
+                switch_y1.add(i, ObjectAnimator.ofFloat(findViewById(first), "y", ys[2]));
+                switch_y2.add(i, ObjectAnimator.ofFloat(findViewById(third), "y", ys[0]));
                 first = third;
                 third = temp;
                 break;
             case 1:
-                va_y1 = ValueAnimator.ofFloat(0f, 605f);
-                va_y2 = ValueAnimator.ofFloat(0f, -605f);
-                a = second;
-                b = third;
+                switch_y1.add(i, ObjectAnimator.ofFloat(findViewById(second), "y", ys[2]));
+                switch_y2.add(i, ObjectAnimator.ofFloat(findViewById(third), "y", ys[1]));
                 temp = second;
                 second = third;
                 third = temp;
                 break;
             case 2:
-                va_y1 = ValueAnimator.ofFloat(0f, 605f);
-                va_y2 = ValueAnimator.ofFloat(0f, -605f);
-                a = first;
-                b = second;
+                switch_y1.add(i, ObjectAnimator.ofFloat(findViewById(first), "y", ys[1]));
+                switch_y2.add(i, ObjectAnimator.ofFloat(findViewById(second), "y", ys[0]));
                 temp = first;
                 first = second;
                 second = temp;
                 break;
-
         }
 
-        va_y1.setDuration(1000);
-        va_y2.setDuration(1000);
+        switch_y1.get(i).setDuration(1000);
+        switch_y2.get(i).setDuration(1000);
 
-        final ImageButton switch1 = (ImageButton) findViewById(a);
-        final ImageButton switch2 = (ImageButton) findViewById(b);
+        switches.play(switch_y1.get(i)).with(switch_y2.get(i));
 
+        if(i > 0)
+        {
+            switches.play(switch_y1.get(i)).after(switch_y1.get(i-1));
+        }
 
-        va_y1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
-                switch1.setTranslationY((float)animation.getAnimatedValue());
-            }
-        });
-
-        va_y2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
-                switch2.setTranslationY((float)animation.getAnimatedValue());
-            }
-        });
-
-        va_y1.start();
-        va_y2.start();
-        //http://www.vogella.com/tutorials/AndroidAnimation/article.html
-        //create three paths that move the cards and call one of them based on the parameter passed
-        //http://stackoverflow.com/questions/33088728/moving-an-image-with-button-android-studio
-        //https://software.intel.com/en-us/android/articles/2d-animation-for-android-series-comparing-and-contrasting-different-ways-of-doing-the-same
+        if(i == noOfTurns-1)
+        {
+            switches.start();
+        }
     }
 
     //method that is executed when one of the cards is selected
