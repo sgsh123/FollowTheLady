@@ -23,9 +23,12 @@ public class Following extends AppCompatActivity {
     int third = R.id.card3;
 
     AnimatorSet switches = new AnimatorSet();
+
+    //global variables to store multiple animations, going both ways (from 1 to 2 and 2 to 1)
     List<ObjectAnimator> switch_y1 = new ArrayList<>();
     List<ObjectAnimator> switch_y2 = new ArrayList<>();
 
+    //global variables to store the positions of the cards on the screen
     float ys[] = new float[3];
 
     //method that gets called every time the activity is rendered
@@ -42,8 +45,10 @@ public class Following extends AppCompatActivity {
         findViewById(R.id.card2).setBackgroundResource(R.drawable.queen);
         findViewById(R.id.card3).setBackgroundResource(R.drawable.king);
 
+        //use an empty object to activate Global Layout Listener
         final View view = findViewById(R.id.check_layout);
 
+        //Global Layout Listener to check if the layout has been rendered
         view.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -81,6 +86,7 @@ public class Following extends AppCompatActivity {
                     animation(path, i, noOfTurns);
                 }
 
+                //allow clicking only once the last animation is executed
                 switch_y1.get(noOfTurns-1).addListener(new AnimatorListenerAdapter()
                 {
                     @Override
@@ -102,8 +108,10 @@ public class Following extends AppCompatActivity {
     //method to run the animation
     public void animation(int path, int i, int noOfTurns)
     {
+        //temporary variable to facilitate the switching of ids
         int temp = first;
 
+        //assign values to Object Animators and carry out the switches according to the path generated
         switch(path)
         {
             case 0:
@@ -131,13 +139,16 @@ public class Following extends AppCompatActivity {
         switch_y1.get(i).setDuration(1000);
         switch_y2.get(i).setDuration(1000);
 
+        //simultaneously execute the switches in opposite directions
         switches.play(switch_y1.get(i)).with(switch_y2.get(i));
 
+        //add to the set switches after the previous one if there is a previous one
         if(i > 0)
         {
             switches.play(switch_y1.get(i)).after(switch_y1.get(i-1));
         }
 
+        //start the animation set once the last animation has been added
         if(i == noOfTurns-1)
         {
             switches.start();

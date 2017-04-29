@@ -13,9 +13,12 @@ public class EndScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_end_screen);
 
+        //receive information from Intent that called this activity
         String winorlose = getIntent().getStringExtra("status");
+
         TextView message = (TextView) findViewById(R.id.message);
 
+        //set appropriate gifs and messages
         if(winorlose.equals("won"))
         {
             findViewById(R.id.gifset).setBackgroundResource(R.drawable.win1);
@@ -27,6 +30,7 @@ public class EndScreen extends AppCompatActivity {
         }
     }
 
+    //method to call Main Activity on the press of a button
     public void menu_return(View v)
     {
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
