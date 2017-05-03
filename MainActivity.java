@@ -9,7 +9,6 @@ import android.support.v7.widget.PopupMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +16,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        findViewById(R.id.lvl9).setClickable(false);
+        findViewById(R.id.lvl8).setClickable(false);
+        findViewById(R.id.lvl7).setClickable(false);
+        findViewById(R.id.lvl6).setClickable(false);
+        findViewById(R.id.lvl5).setClickable(false);
+        findViewById(R.id.lvl4).setClickable(false);
+        findViewById(R.id.lvl3).setClickable(false);
+        findViewById(R.id.lvl2).setClickable(false);
 
         //creates instances of the shared preferences file of the app and its editor
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -26,6 +35,40 @@ public class MainActivity extends AppCompatActivity {
         String setting = sharedPreferences.getString("settings", "Easy");
         editor.putString("settings", setting);
         editor.commit();
+
+        //declares the value for levels unlocked based on if levels have been previously cleared
+        int level = Integer.parseInt(sharedPreferences.getString("levels", "1"));
+
+        switch(level)
+        {
+            case 9:
+                findViewById(R.id.lock9).setVisibility(View.GONE);
+                findViewById(R.id.lvl9).setClickable(true);
+            case 8:
+                findViewById(R.id.lock8).setVisibility(View.GONE);
+                findViewById(R.id.lvl8).setClickable(true);
+            case 7:
+                findViewById(R.id.lock7).setVisibility(View.GONE);
+                findViewById(R.id.lvl7).setClickable(true);
+            case 6:
+                findViewById(R.id.lock6).setVisibility(View.GONE);
+                findViewById(R.id.lvl6).setClickable(true);
+            case 5:
+                findViewById(R.id.lock5).setVisibility(View.GONE);
+                findViewById(R.id.lvl5).setClickable(true);
+            case 4:
+                findViewById(R.id.lock4).setVisibility(View.GONE);
+                findViewById(R.id.lvl4).setClickable(true);
+            case 3:
+                findViewById(R.id.lock3).setVisibility(View.GONE);
+                findViewById(R.id.lvl3).setClickable(true);
+            case 2:
+                findViewById(R.id.lock2).setVisibility(View.GONE);
+                findViewById(R.id.lvl2).setClickable(true);
+            case 1:
+                break;
+        }
+
     }
 
         //Method to call the game and pass the appropriate number of turns on the basis of the level chosen
@@ -36,30 +79,39 @@ public class MainActivity extends AppCompatActivity {
             {
                 case R.id.lvl1:
                     i.putExtra("turns", 5);
+                    i.putExtra("level", 1);
                     break;
                 case R.id.lvl2:
                     i.putExtra("turns", 10);
+                    i.putExtra("level", 2);
                     break;
                 case R.id.lvl3:
                     i.putExtra("turns", 15);
+                    i.putExtra("level", 3);
                     break;
                 case R.id.lvl4:
                     i.putExtra("turns", 18);
+                    i.putExtra("level", 4);
                     break;
                 case R.id.lvl5:
                     i.putExtra("turns", 23);
+                    i.putExtra("level", 5);
                     break;
                 case R.id.lvl6:
                     i.putExtra("turns", 27);
+                    i.putExtra("level", 6);
                     break;
                 case R.id.lvl7:
                     i.putExtra("turns", 30);
+                    i.putExtra("level", 7);
                     break;
                 case R.id.lvl8:
                     i.putExtra("turns", 33);
+                    i.putExtra("level", 8);
                     break;
                 case R.id.lvl9:
                     i.putExtra("turns", 35);
+                    i.putExtra("level", 9);
                     break;
             }
 

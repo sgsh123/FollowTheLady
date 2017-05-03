@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -36,6 +37,8 @@ public class Following extends AppCompatActivity {
     //integer value to store the number of milliseconds the animation will take based on level
     int ani_speed = 1500;
 
+    int to_unlock = 2;
+
     //method that gets called every time the activity is rendered
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,7 @@ public class Following extends AppCompatActivity {
 
         //statement to save the variable passed from the main activity
         final int noOfTurns = getIntent().getIntExtra("turns", 0);
+        to_unlock = getIntent().getIntExtra("level", 1) + 1;
 
         //retrieve difficulty settings from the shared preferences file
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -192,6 +196,19 @@ public class Following extends AppCompatActivity {
         if(correct == clicked)
         {
             i.putExtra("status", "won");
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+
+            int crossed_level = Integer.parseInt(sharedPreferences.getString("levels", "1"));
+
+
+            if(to_unlock > crossed_level)
+            {
+                editor.putString("levels", "" + to_unlock);
+                editor.apply();
+            }
+
         }
         else
         {
