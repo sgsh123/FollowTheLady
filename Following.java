@@ -5,7 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -31,6 +33,9 @@ public class Following extends AppCompatActivity {
     //global variables to store the positions of the cards on the screen
     float ys[] = new float[3];
 
+    //integer value to store the number of milliseconds the animation will take based on level
+    int ani_speed = 1500;
+
     //method that gets called every time the activity is rendered
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,24 @@ public class Following extends AppCompatActivity {
 
         //statement to save the variable passed from the main activity
         final int noOfTurns = getIntent().getIntExtra("turns", 0);
+
+        //retrieve difficulty settings from the shared preferences file
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String setting = sharedPreferences.getString("settings", "Easy");
+
+        //assign values to the duration of the animation on the basis of difficulty settings
+        if(setting.equals("Easy"))
+        {
+            ani_speed = 1500;
+        }
+        else if(setting.equals("Medium"))
+        {
+            ani_speed = 1000;
+        }
+        else if(setting.equals("Hard"))
+        {
+            ani_speed = 500;
+        }
 
         //display to the user the original positions of the cards
         findViewById(R.id.card1).setBackgroundResource(R.drawable.jack);
@@ -136,8 +159,9 @@ public class Following extends AppCompatActivity {
                 break;
         }
 
-        switch_y1.get(i).setDuration(1000);
-        switch_y2.get(i).setDuration(1000);
+        //set speed according to the Global variable that has a value based on difficulty settings
+        switch_y1.get(i).setDuration(ani_speed);
+        switch_y2.get(i).setDuration(ani_speed);
 
         //simultaneously execute the switches in opposite directions
         switches.play(switch_y1.get(i)).with(switch_y2.get(i));
