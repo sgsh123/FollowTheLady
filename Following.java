@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,18 +27,23 @@ public class Following extends AppCompatActivity {
     int second = R.id.card2;
     int third = R.id.card3;
 
+
     AnimatorSet switches = new AnimatorSet();
 
-    //global variables to store multiple animations, going both ways (from 1 to 2 and 2 to 1)
+    //global variables to store multiple animations, going both ways (from 1 to 2 and 2 to 1) and for both potrarit and landscape
     List<ObjectAnimator> switch_y1 = new ArrayList<>();
     List<ObjectAnimator> switch_y2 = new ArrayList<>();
+    List<ObjectAnimator> switch_x1 = new ArrayList<>();
+    List<ObjectAnimator> switch_x2 = new ArrayList<>();
 
     //global variables to store the positions of the cards on the screen
     float ys[] = new float[3];
+    float xs[] = new float[3];
 
     //integer value to store the number of milliseconds the animation will take based on level
     int ani_speed = 1500;
 
+    //global variable to store the value of the level that is being unlocked
     int to_unlock = 2;
 
     //method that gets called every time the activity is rendered
@@ -45,7 +52,7 @@ public class Following extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_following);
 
-        //statement to save the variable passed from the main activity
+        //statements to save the variables passed from the main activity
         final int noOfTurns = getIntent().getIntExtra("turns", 0);
         to_unlock = getIntent().getIntExtra("level", 1) + 1;
 
@@ -85,6 +92,11 @@ public class Following extends AppCompatActivity {
                         ys[0] = findViewById(first).getTop();
                         ys[1] = findViewById(second).getTop();
                         ys[2] = findViewById(third).getTop();
+
+                        xs[0] = findViewById(first).getLeft();
+                        xs[1] = findViewById(second).getLeft();
+                        xs[2] = findViewById(third).getLeft();
+
                     }
                 });
 
@@ -97,43 +109,73 @@ public class Following extends AppCompatActivity {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
-            public void run() {
+                public void run() {
 
-                //upturn the cards back to identical backgrounds
-                findViewById(R.id.card1).setBackgroundResource(R.drawable.back_black);
-                findViewById(R.id.card2).setBackgroundResource(R.drawable.back_black);
-                findViewById(R.id.card3).setBackgroundResource(R.drawable.back_black);
+                 //upturn the cards back to identical backgrounds
+                 findViewById(R.id.card1).setBackgroundResource(R.drawable.back_black);
+                 findViewById(R.id.card2).setBackgroundResource(R.drawable.back_black);
+                 findViewById(R.id.card3).setBackgroundResource(R.drawable.back_black);
 
-                //run a loop as many times as the difficulty of the level demands
-                for(int i = 0; i < noOfTurns; i++)
-                {
-                    //generate 0,1 or 2 for the path and call the animation with their R.ids
-                    Random r = new Random(); //need an instance to call the nextInt method in a non-static context
-                    int path = r.nextInt(2);
-                    animation(path, i, noOfTurns);
-                }
+                    //Obtain Screen orientation and send commands according to landscape or portrait
+                    Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+                    int orientation = display.getRotation();
 
-                //allow clicking only once the last animation is executed
-                switch_y1.get(noOfTurns-1).addListener(new AnimatorListenerAdapter()
-                {
-                    @Override
-                    public void onAnimationEnd(Animator animation)
+                    //if landscape
+                    if (orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270)
                     {
-                        //allows the user to choose once the turning is complete
-                        findViewById(R.id.card1).setClickable(true);
-                        findViewById(R.id.card2).setClickable(true);
-                        findViewById(R.id.card3).setClickable(true);
-                    }
-                });
+                        //run a loop as many times as the difficulty of the level demands
+                        for(int i = 0; i < noOfTurns; i++) {
+                            //generate 0,1 or 2 for the path and call the animation with their R.ids
+                            Random r = new Random(); //need an instance to call the nextInt method in a non-static context
+                            int path = r.nextInt(2);
 
+                            animation_x(path, i, noOfTurns);
+                        }
+
+                        //allow clicking only once the last animation is executed
+                        switch_x1.get(noOfTurns-1).addListener(new AnimatorListenerAdapter()
+                        {
+                            @Override
+                            public void onAnimationEnd(Animator animation)
+                            {
+                                //allows the user to choose once the turning is complete
+                                findViewById(R.id.card1).setClickable(true);
+                                findViewById(R.id.card2).setClickable(true);
+                                findViewById(R.id.card3).setClickable(true);
+                            }
+                        });
+                   }
+                    //if portrait
+                   else
+                    {
+                        //run a loop as many times as the difficulty of the level demands
+                        for(int i = 0; i < noOfTurns; i++) {
+                            //generate 0,1 or 2 for the path and call the animation with their R.ids
+                            Random r = new Random(); //need an instance to call the nextInt method in a non-static context
+                            int path = r.nextInt(2);
+
+                            animation_y(path, i, noOfTurns);
+
+                        }
+                        //allow clicking only once the last animation is executed
+                        switch_y1.get(noOfTurns-1).addListener(new AnimatorListenerAdapter()
+                        {
+                            @Override
+                            public void onAnimationEnd(Animator animation)
+                            {
+                                //allows the user to choose once the turning is complete
+                                findViewById(R.id.card1).setClickable(true);
+                                findViewById(R.id.card2).setClickable(true);
+                                findViewById(R.id.card3).setClickable(true);
+                            }
+                        });
+                    }
             }
         }, 3000);
-
-
     }
 
-    //method to run the animation
-    public void animation(int path, int i, int noOfTurns)
+    //method to run the animation in portrait mode
+    public void animation_y(int path, int i, int noOfTurns)
     {
         //temporary variable to facilitate the switching of ids
         int temp = first;
@@ -174,6 +216,58 @@ public class Following extends AppCompatActivity {
         if(i > 0)
         {
             switches.play(switch_y1.get(i)).after(switch_y1.get(i-1));
+        }
+
+        //start the animation set once the last animation has been added
+        if(i == noOfTurns-1)
+        {
+            switches.start();
+        }
+    }
+
+
+    //method to run the animation in landscape mode
+    public void animation_x(int path, int i, int noOfTurns)
+    {
+        //temporary variable to facilitate the switching of ids
+        int temp = first;
+
+        //assign values to Object Animators and carry out the switches according to the path generated
+        switch(path)
+        {
+            case 0:
+                switch_x1.add(i, ObjectAnimator.ofFloat(findViewById(first), "x", xs[2]));
+                switch_x2.add(i, ObjectAnimator.ofFloat(findViewById(third), "x", xs[0]));
+                first = third;
+                third = temp;
+                break;
+            case 1:
+                switch_x1.add(i, ObjectAnimator.ofFloat(findViewById(second), "x", xs[2]));
+                switch_x2.add(i, ObjectAnimator.ofFloat(findViewById(third), "x", xs[1]));
+                temp = second;
+                second = third;
+                third = temp;
+                break;
+            case 2:
+                switch_x1.add(i, ObjectAnimator.ofFloat(findViewById(first), "x", xs[1]));
+                switch_x2.add(i, ObjectAnimator.ofFloat(findViewById(second), "x", xs[0]));
+                temp = first;
+                first = second;
+                second = temp;
+                break;
+        }
+
+        //set speed according to the Global variable that has a value based on difficulty settings
+        switch_x1.get(i).setDuration(ani_speed);
+        switch_x2.get(i).setDuration(ani_speed);
+
+        //simultaneously execute the switches in opposite directions
+        switches.play(switch_x1.get(i)).with(switch_x2.get(i));
+
+        //add to the set switches after the previous one if there is a previous one
+        if(i > 0)
+        {
+            switches.play(switch_x1.get(i)).after(switch_x1.get(i-1));
         }
 
         //start the animation set once the last animation has been added
