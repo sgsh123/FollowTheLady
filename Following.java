@@ -30,7 +30,8 @@ public class Following extends AppCompatActivity {
 
     AnimatorSet switches = new AnimatorSet();
 
-    //global variables to store multiple animations, going both ways (from 1 to 2 and 2 to 1) and for both potrarit and landscape
+    //global variables to store multiple animations, going both ways (from 1 to 2 and 2 to 1)
+    //for both portrait and landscape
     List<ObjectAnimator> switch_y1 = new ArrayList<>();
     List<ObjectAnimator> switch_y2 = new ArrayList<>();
     List<ObjectAnimator> switch_x1 = new ArrayList<>();
@@ -290,6 +291,8 @@ public class Following extends AppCompatActivity {
         if(correct == clicked)
         {
             i.putExtra("status", "won");
+
+            //unlock the next level only if the currently crossed levels are lesser than the new one being unlocked
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor editor = sharedPreferences.edit();
 

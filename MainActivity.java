@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        //disable all levels except the first
         findViewById(R.id.lvl9).setClickable(false);
         findViewById(R.id.lvl8).setClickable(false);
         findViewById(R.id.lvl7).setClickable(false);
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.lvl3).setClickable(false);
         findViewById(R.id.lvl2).setClickable(false);
 
-        //creates instances of the shared preferences file of the app and its editor
+        //store difficult settings in the Shared Preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("settings", setting);
         editor.commit();
 
-        //declares the value for levels unlocked based on if levels have been previously cleared
+        //receives the number of levels already unlocked
         int level = Integer.parseInt(sharedPreferences.getString("levels", "1"));
 
         switch(level)
@@ -118,9 +118,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         }
 
+        //Method to display about activity
         public void goToAbout(View v)
         {
-
+            Intent i = new Intent(getApplicationContext(), About.class);
+            startActivity(i);
         }
 
         //Method to create Popo Up Menu and Display it
