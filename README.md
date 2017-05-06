@@ -2,7 +2,7 @@
 
 About the Repository  
 This repository is linked with an Android Studio project that aims to create a simulation of the popular fair game “Follow the Lady”.   
-As the linking of the repository only uploads the Java class files the c.java ode can’t be executed directly without resource files like the XML files that it is dependent on.  
+The linking of the repository only uploads the Java class files automatically but the code can’t be executed directly without resource files like the XML files that it is dependent on.  
 The manually uploaded APK that has been generated for debugging can be run installed on any Android phone that has an API version higher than 15.   
 
 About the Project  
