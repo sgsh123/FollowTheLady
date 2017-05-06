@@ -2,8 +2,8 @@
 
 About the Repository  
 This repository is linked with an Android Studio project that aims to create a simulation of the popular fair game “Follow the Lady”.   
-As the linking of the repository only uploads the Java class files the code can’t be executed without the Resource files like the XML files that it is dependent on.  
-The manually uploaded APK that has been generated for debugging can be run installed and  on any Android device that has an API version higher than 15.   
+As the linking of the repository only uploads the Java class files the c.java ode can’t be executed directly without resource files like the XML files that it is dependent on.  
+The manually uploaded APK that has been generated for debugging can be run installed on any Android phone that has an API version higher than 15.   
 
 About the Project  
 The aim of the game is to keep track of the Queen of Hearts as the cards are upturned and switched around.   
