@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch(level)
         {
+            case 10:
             case 9:
                 findViewById(R.id.lock9).setVisibility(View.GONE);
                 findViewById(R.id.lvl9).setClickable(true);
